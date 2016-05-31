@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Deck</string>
+    <string name="post_url">http://plag.com/post/</string>
+
+    <string name="activity_share_dialog_title">New item</string>
+    <string name="activity_share_dialog_hint">Name</string>
+    <string name="menu_main_search">Search</string>
+    <string name="menu_main_add">Add</string>
+    <string name="menu_main_delete">Delete</string>
+
+    <plurals name="activity_main_delete">
+        <item quantity="one">%d card deleted</item>
+        <item quantity="other">%d cards deleted</item>
+    </plurals>
+    <string name="title_activity_test">TestActivity</string>
+</resources>
