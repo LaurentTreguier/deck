@@ -11,7 +11,7 @@ import com.github.laurenttreguier.deck.model.Card
 import java.io.File
 
 class ShareActivity : Activity() {
-    private var saving = false;
+    private var saving = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

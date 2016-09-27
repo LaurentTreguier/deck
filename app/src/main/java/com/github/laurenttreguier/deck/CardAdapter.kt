@@ -23,8 +23,8 @@ class CardAdapter(private val cards: MutableList<Card>) :
     private var onSelectionListener: OnSelectionListener? = null
 
     companion object {
-        private var previewWidth = 0
-        private var previewHeight = 0
+        private val SELECTED_SCALE = 0.9f
+        private val UNSELECTED_SCALE = 1f
     }
 
     init {
@@ -44,9 +44,9 @@ class CardAdapter(private val cards: MutableList<Card>) :
         fun updateSelect(animate: Boolean) {
             holder?.let {
                 val visibility = if (selected.contains(card)) View.VISIBLE else View.GONE
-                val scale = if (selected.contains(card)) 0.8f else 1f
+                val scale = if (selected.contains(card)) SELECTED_SCALE else UNSELECTED_SCALE
 
-                holder.select?.visibility = visibility;
+                holder.select?.visibility = visibility
 
                 if (animate) {
                     holder.root?.animate()

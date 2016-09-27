@@ -40,10 +40,7 @@ class MainActivity : AppCompatActivity() {
 
         refresh?.setColorSchemeColors(ResourcesCompat
                 .getColor(resources, R.color.colorAccent, theme))
-
-        refresh?.setOnRefreshListener {
-            setupContent(intent)
-        }
+        refresh?.setOnRefreshListener { setupContent(intent) }
 
         recycler?.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(outRect: Rect?, view: View?, parent: RecyclerView?,
@@ -103,9 +100,7 @@ class MainActivity : AppCompatActivity() {
                 Snackbar.make(recycler as RecyclerView,
                         resources.getQuantityString(R.plurals.activity_main_delete, count, count),
                         Snackbar.LENGTH_LONG)
-                        .setAction(android.R.string.cancel, {
-                            adapter.restore()
-                        })
+                        .setAction(android.R.string.cancel, { adapter.restore() })
                         .setCallback(object : Snackbar.Callback() {
                             override fun onDismissed(snackbar: Snackbar?, event: Int) {
                                 if (event != DISMISS_EVENT_ACTION) {
@@ -124,35 +119,42 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupContent(intent: Intent?) {
-        loader?.show()
-        AsyncTask.execute {
-            val cards = if (intent?.action == Intent.ACTION_SEARCH) {
-                Select.from(Card::class.java)
-                        .where(Condition.prop(Card::name.name)
-                                .like("%" + intent?.getStringExtra(SearchManager.QUERY) + "%"))
-                        .list()
-            } else {
-                SugarRecord.listAll(Card::class.java)
+        object : AsyncTask<Void, Void, CardAdapter>() {
+            override fun onPreExecute() {
+                loader?.show()
             }
 
-            val adapter = CardAdapter(cards)
-            adapter.setOnSelectionListener(object : CardAdapter.OnSelectionListener {
-                override fun onBegin() {
-                    selecting = true
-                    invalidateOptionsMenu()
+            override fun doInBackground(vararg params: Void?): CardAdapter {
+                val cards = if (intent?.action == Intent.ACTION_SEARCH) {
+                    Select.from(Card::class.java)
+                            .where(Condition.prop(Card::name.name)
+                                    .like("%" + intent?.getStringExtra(SearchManager.QUERY) + "%"))
+                            .list()
+                } else {
+                    SugarRecord.listAll(Card::class.java)
                 }
 
-                override fun onEnd() {
-                    selecting = false
-                    invalidateOptionsMenu()
-                }
-            })
+                val adapter = CardAdapter(cards)
+                adapter.setOnSelectionListener(object : CardAdapter.OnSelectionListener {
+                    override fun onBegin() {
+                        selecting = true
+                        invalidateOptionsMenu()
+                    }
 
-            runOnUiThread {
-                recycler?.adapter = adapter
+                    override fun onEnd() {
+                        selecting = false
+                        invalidateOptionsMenu()
+                    }
+                })
+
+                return adapter
+            }
+
+            override fun onPostExecute(result: CardAdapter?) {
+                recycler?.adapter = result
                 loader?.hide()
                 refresh?.isRefreshing = false
             }
-        }
+        }.execute()
     }
 }

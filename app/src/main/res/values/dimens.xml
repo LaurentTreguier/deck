@@ -1,11 +1,9 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="activity_horizontal_margin_half">8dp</dimen>
     <dimen name="activity_vertical_margin_half">8dp</dimen>
     <dimen name="checkbox_size">24dp</dimen>
-
-    <integer name="activity_main_span_count">2</integer>
     <dimen name="fab_margin">16dp</dimen>
+    <integer name="activity_main_span_count">2</integer>
 </resources>
