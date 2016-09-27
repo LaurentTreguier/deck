@@ -94,11 +94,16 @@ class CardAdapter(private val cards: MutableList<Card>) :
 
                     override fun onResourceReady(resource: GlideDrawable?, model: File?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
                         holder.preview?.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
-                            override fun onLayoutChange(p0: View?, p1: Int, p2: Int, p3: Int, p4: Int, p5: Int, p6: Int, p7: Int, p8: Int) {
-                                holder.preview?.removeOnLayoutChangeListener(this)
-                                params?.width = holder.preview?.width
-                                params?.height = holder.preview?.height
-                                holder.preview?.layoutParams = params
+                            override fun onLayoutChange(v: View?, left: Int, top: Int, right: Int, bottom: Int, oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int) {
+                                holder.preview?.let {
+                                    it.removeOnLayoutChangeListener(this)
+
+                                    if (it.height > 0) {
+                                        params?.width = it.width
+                                        params?.height = it.height
+                                        holder.preview?.layoutParams = params
+                                    }
+                                }
                             }
                         })
 
