@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:theme="@style/AppTheme.CardView"
-    tools:context=".MainActivity">
+    android:foreground="?attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,7 +30,7 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin_half"
         android:layout_marginStart="@dimen/activity_horizontal_margin_half"
         android:layout_marginTop="@dimen/activity_vertical_margin_half"
-        android:background="@drawable/ic_checkbox"
+        android:background="@drawable/checkbox"
         android:src="@drawable/ic_check"
         android:visibility="gone" />
 </android.support.v7.widget.CardView>
