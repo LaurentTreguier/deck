@@ -6,3 +6,5 @@
 /build
 /captures
 /projectFilesBackup
+*.apk
+/*.png
