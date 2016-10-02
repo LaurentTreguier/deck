@@ -10,6 +10,7 @@
     <string name="menu_main_new_folder">Ajouter un nouveau dossier</string>
     <string name="menu_main_delete_folder">Supprimer ce dossier</string>
     <string name="menu_main_delete">Supprimer</string>
+    <string name="menu_main_add">Ajouter à un autre dossier</string>
 
     <plurals name="activity_main_delete">
         <item quantity="one">%d carte supprimée</item>

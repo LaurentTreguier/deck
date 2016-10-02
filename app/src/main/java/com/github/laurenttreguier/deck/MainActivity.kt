@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(if (selecting) R.menu.main_delete else R.menu.main, menu)
+        menuInflater.inflate(if (selecting) R.menu.main_selection else R.menu.main, menu)
 
         if (!selecting) {
             val searchManager = getSystemService(SEARCH_SERVICE) as SearchManager
@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity() {
 
             R.id.main_delete_folder -> deleteFolder()
 
-            R.id.main_cancel -> (recycler?.adapter as CardAdapter).clear()
+            R.id.main_cancel -> cancelSelection()
 
             R.id.main_delete -> {
                 val adapter = recycler?.adapter as CardAdapter
@@ -128,7 +128,7 @@ class MainActivity : AppCompatActivity() {
                 Snackbar.make(recycler as RecyclerView,
                         resources.getQuantityString(R.plurals.activity_main_delete, count, count),
                         Snackbar.LENGTH_LONG)
-                        .setAction(android.R.string.cancel, { adapter.restore() })
+                        .setAction(android.R.string.cancel) { adapter.restore() }
                         .setCallback(object : Snackbar.Callback() {
                             override fun onDismissed(snackbar: Snackbar?, event: Int) {
                                 if (event != DISMISS_EVENT_ACTION) {
@@ -149,6 +149,8 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (drawer!!.isDrawerOpen(GravityCompat.START)) {
             drawer!!.closeDrawer(GravityCompat.START)
+        } else if (selecting) {
+            cancelSelection()
         } else {
             super.onBackPressed()
         }
@@ -216,6 +218,7 @@ class MainActivity : AppCompatActivity() {
                     getString(R.string.activity_main_all_cards)
                 }
 
+                cancelSelection()
                 invalidateOptionsMenu()
             }
 
@@ -299,4 +302,6 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, R.string.activity_main_cannot_delete, Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun cancelSelection() = recycler?.adapter?.run { (this as CardAdapter).clear() }
 }
