@@ -264,7 +264,7 @@ class MainActivity : AppCompatActivity() {
         val nameEditText = dialogContent.findViewById(R.id.dialog_name) as TextView
 
         AlertDialog.Builder(this, R.style.AppTheme_AlertDialog)
-                .setTitle(R.string.activity_share_dialog_title)
+                .setTitle(R.string.activity_main_new_folder)
                 .setView(dialogContent)
                 .setPositiveButton(android.R.string.ok) { dialogInterface, i ->
                     val name = nameEditText.text

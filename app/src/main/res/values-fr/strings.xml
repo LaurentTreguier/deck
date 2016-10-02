@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Deck</string>
+    <string name="activity_main_all_cards">Toutes les cartes</string>
+    <string name="activity_main_new_folder">Nouveau dossier</string>
+    <string name="activity_main_cannot_delete">Ce dossier ne peut pas être supprimé</string>
+    <string name="activity_share_dialog_title">Nouvelle carte</string>
+    <string name="activity_share_dialog_hint">Nom</string>
+    <string name="menu_main_search">Rechercher</string>
+    <string name="menu_main_new_folder">Ajouter un nouveau dossier</string>
+    <string name="menu_main_delete_folder">Supprimer ce dossier</string>
+    <string name="menu_main_delete">Supprimer</string>
+
+    <plurals name="activity_main_delete">
+        <item quantity="one">%d carte supprimée</item>
+        <item quantity="other">%d cartes supprimée</item>
+    </plurals>
+</resources>
