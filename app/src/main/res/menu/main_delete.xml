@@ -8,4 +8,8 @@
         android:icon="@drawable/ic_delete"
         android:title="@string/menu_main_delete"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/main_cancel"
+        android:title="@android:string/cancel"
+        app:showAsAction="ifRoom" />
 </menu>

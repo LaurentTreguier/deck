@@ -2,15 +2,18 @@
     <string name="app_name">Deck</string>
     <string name="post_url">http://plag.com/post/</string>
 
+    <string name="activity_main_all_cards">All cards</string>
+    <string name="activity_main_new_folder">New folder</string>
+    <string name="activity_main_cannot_delete">This folder cannot be deleted</string>
     <string name="activity_share_dialog_title">New item</string>
     <string name="activity_share_dialog_hint">Name</string>
     <string name="menu_main_search">Search</string>
-    <string name="menu_main_add">Add</string>
+    <string name="menu_main_new_folder">New folder</string>
+    <string name="menu_main_delete_folder">Delete folder</string>
     <string name="menu_main_delete">Delete</string>
 
     <plurals name="activity_main_delete">
         <item quantity="one">%d card deleted</item>
         <item quantity="other">%d cards deleted</item>
     </plurals>
-    <string name="title_activity_test">TestActivity</string>
 </resources>
