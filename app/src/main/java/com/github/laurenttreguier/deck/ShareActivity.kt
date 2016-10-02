@@ -19,7 +19,7 @@ class ShareActivity : Activity() {
         val url = ShareCompat.IntentReader.from(this).text.toString()
         val imageUri = ShareCompat.IntentReader.from(this).stream
         val dialogContent = layoutInflater.inflate(R.layout.dialog, null)
-        val nameEditText = dialogContent.findViewById(R.id.dialog_name) as TextView?
+        val nameEditText = dialogContent.findViewById(R.id.dialog_name) as TextView
 
         fun terminate() {
             val imageFile = File(imageUri.path)
@@ -29,7 +29,7 @@ class ShareActivity : Activity() {
             }
 
             val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputManager.hideSoftInputFromWindow(nameEditText?.windowToken, 0)
+            inputManager.hideSoftInputFromWindow(nameEditText.windowToken, 0)
             finish()
         }
 
@@ -37,8 +37,8 @@ class ShareActivity : Activity() {
                 .setTitle(R.string.activity_share_dialog_title)
                 .setView(dialogContent)
                 .setPositiveButton(android.R.string.ok) { dialogInterface, i ->
-                    val id = url.replace(getString(R.string.post_url), "").replace("/", "").toLong()
-                    val card = Card(id, nameEditText?.text.toString(), imageUri.path)
+                    val id = url.replace(Constants.POST_URL, "").replace("/", "").toLong()
+                    val card = Card(id, nameEditText.text.toString(), imageUri.path)
 
                     card.save()
                     saving = true

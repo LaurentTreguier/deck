@@ -42,22 +42,22 @@ class CardAdapter(private val cards: MutableList<Card>) :
         val card = cards[position]
 
         fun updateSelect(animate: Boolean) {
-            holder?.let {
+            holder?.run {
                 val visibility = if (selected.contains(card)) View.VISIBLE else View.GONE
                 val scale = if (selected.contains(card)) SELECTED_SCALE else UNSELECTED_SCALE
 
-                holder.select?.visibility = visibility
+                select?.visibility = visibility
 
                 if (animate) {
-                    holder.root?.animate()
+                    root?.animate()
                             ?.setInterpolator(FastOutSlowInInterpolator())
-                            ?.setDuration(holder.root?.context?.resources
+                            ?.setDuration(root?.context?.resources
                                     ?.getInteger(android.R.integer.config_shortAnimTime)!!.toLong())
                             ?.scaleX(scale)
                             ?.scaleY(scale)
                 } else {
-                    holder.root?.scaleX = scale
-                    holder.root?.scaleY = scale
+                    root?.scaleX = scale
+                    root?.scaleY = scale
                 }
             }
         }
@@ -80,7 +80,7 @@ class CardAdapter(private val cards: MutableList<Card>) :
             }
         }
 
-        holder?.root?.let {
+        holder?.root?.run {
             holder.title?.text = card.name
 
             val request = Glide.with(holder.preview?.context).load(File(card.previewPath))
@@ -114,17 +114,17 @@ class CardAdapter(private val cards: MutableList<Card>) :
 
             request.into(holder.preview)
 
-            it.setOnClickListener {
+            setOnClickListener {
                 if (selected.size > 0) {
                     toggle()
                 } else {
-                    val url = holder.title?.context?.getString(R.string.post_url) + card.id
+                    val url = Constants.POST_URL + card.id
                     holder.preview?.context?.startActivity(Intent.parseUri(url, 0)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 }
             }
 
-            it.setOnLongClickListener {
+            setOnLongClickListener {
                 toggle()
                 return@setOnLongClickListener true
             }

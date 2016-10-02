@@ -31,7 +31,8 @@
         <activity
             android:name="com.github.laurenttreguier.deck.MainActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,7 +50,8 @@
             android:name="com.github.laurenttreguier.deck.ShareActivity"
             android:excludeFromRecents="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Invisible">
+            android:theme="@style/AppTheme.Invisible"
+            android:windowSoftInputMode="adjustPan">
 
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

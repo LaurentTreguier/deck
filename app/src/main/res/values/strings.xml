@@ -1,7 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Deck</string>
-    <string name="post_url">http://plag.com/post/</string>
-
     <string name="activity_main_all_cards">All cards</string>
     <string name="activity_main_new_folder">New folder</string>
     <string name="activity_main_cannot_delete">This folder cannot be deleted</string>
