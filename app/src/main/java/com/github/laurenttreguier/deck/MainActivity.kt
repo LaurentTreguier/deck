@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (drawer!!.isDrawerOpen(GravityCompat.START)) {
-            drawer?.closeDrawer(GravityCompat.START)
+            drawer!!.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
@@ -153,15 +153,31 @@ class MainActivity : AppCompatActivity() {
     private fun setupNavigation() {
         navigation?.menu?.clear()
         navigation?.menu
-                ?.add(0, 1, 0, R.string.activity_main_all_cards)
+                ?.add(1, 1, Menu.NONE, R.string.activity_main_all_cards)
                 ?.setIcon(R.drawable.ic_folder_special_dark)
+                ?.setCheckable(true)
+                ?.run {
+                    if (folder == null) {
+                        isChecked = true
+                    }
+                }
 
         SugarRecord.listAll(Folder::class.java)
                 .sorted()
-                .forEach { navigation?.menu?.add(it.name)?.setIcon(R.drawable.ic_folder_dark) }
+                .forEach {
+                    navigation?.menu
+                            ?.add(it.name)
+                            ?.setIcon(R.drawable.ic_folder_dark)
+                            ?.setCheckable(true)
+                            ?.run {
+                                if (folder != null && folder!!.name == it.name) {
+                                    isChecked = true
+                                }
+                            }
+                }
 
         navigation?.menu
-                ?.add(0, 2, 0, R.string.activity_main_new_folder)
+                ?.add(2, 2, Menu.NONE, R.string.activity_main_new_folder)
                 ?.setIcon(R.drawable.ic_add_dark)
         navigation?.setNavigationItemSelectedListener {
             when (it.itemId) {
@@ -174,8 +190,7 @@ class MainActivity : AppCompatActivity() {
 
                 else -> {
                     folder = Select.from(Folder::class.java)
-                            .where(Condition.prop(Folder::name.name)
-                                    .eq(it.title))
+                            .where(Condition.prop(Folder::name.name).eq(it.title))
                             .list()[0]
 
                     setupContent(intent)
@@ -201,8 +216,7 @@ class MainActivity : AppCompatActivity() {
             override fun doInBackground(vararg params: Void?): CardAdapter {
                 val cards = if (folder != null) {
                     Select.from(CardFolder::class.java)
-                            .where(Condition.prop(CardFolder::folder.name)
-                                    .eq(folder!!.id))
+                            .where(Condition.prop(CardFolder::folder.name).eq(folder!!.id))
                             .list()
                             .mapNotNull { it.card }
                             .toMutableList()
@@ -248,10 +262,14 @@ class MainActivity : AppCompatActivity() {
                 .setView(dialogContent)
                 .setPositiveButton(android.R.string.ok) { dialogInterface, i ->
                     val name = nameEditText.text
+                    val num = Select.from(Folder::class.java)
+                            .where(Condition.prop(Folder::name.name).eq(name))
+                            .count()
 
-                    if (name.isNotEmpty()) {
-                        Folder(name.toString()).save()
+                    if (name.isNotEmpty() && num == 0L) {
+                        folder = Folder(name.toString()).apply { save() }
                         setupNavigation()
+                        setupContent(intent)
                     }
                 }
                 .setNegativeButton(android.R.string.cancel, null)
@@ -260,12 +278,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun deleteFolder() {
         if (folder != null) {
-            folder!!.let {
+            folder!!.run {
                 Select.from(CardFolder::class.java)
                         .where(Condition.prop(CardFolder::folder.name)
-                                .eq(it.id))
+                                .eq(id))
                         .list().forEach { it.delete() }
-                it.delete()
+                delete()
             }
 
             folder = null
