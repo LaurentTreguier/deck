@@ -8,8 +8,8 @@
     <string name="activity_share_dialog_title">New item</string>
     <string name="activity_share_dialog_hint">Name</string>
     <string name="menu_main_search">Search</string>
-    <string name="menu_main_new_folder">New folder</string>
-    <string name="menu_main_delete_folder">Delete folder</string>
+    <string name="menu_main_new_folder">Add new folder</string>
+    <string name="menu_main_delete_folder">Delete this folder</string>
     <string name="menu_main_delete">Delete</string>
 
     <plurals name="activity_main_delete">

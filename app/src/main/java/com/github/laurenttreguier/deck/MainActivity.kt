@@ -103,6 +103,10 @@ class MainActivity : AppCompatActivity() {
                             return true
                         }
                     })
+
+            if (folder == null) {
+                menu?.removeItem(R.id.main_delete_folder)
+            }
         }
 
         return super.onCreateOptionsMenu(menu)
@@ -211,6 +215,8 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     getString(R.string.activity_main_all_cards)
                 }
+
+                invalidateOptionsMenu()
             }
 
             override fun doInBackground(vararg params: Void?): CardAdapter {
