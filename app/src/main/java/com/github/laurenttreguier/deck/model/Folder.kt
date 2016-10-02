@@ -10,8 +10,8 @@ class Folder(name: String) : NamedRecord(name), Comparable<Folder> {
     }
 
     override fun compareTo(other: Folder): Int {
-        val a = if (reversed) this else other
-        val b = if (reversed) other else this
+        val a = if (reversed) other else this
+        val b = if (reversed) this else other
         return a.name.compareTo(b.name)
     }
 }

@@ -153,9 +153,9 @@ class MainActivity : AppCompatActivity() {
         navigation?.menu?.clear()
         navigation?.menu?.add(0, 1, 0, R.string.activity_main_all_cards)?.setIcon(R.drawable.ic_folder_special_dark)
 
-        SugarRecord.findAll(Folder::class.java).forEach {
-            navigation?.menu?.add(it.name)?.setIcon(R.drawable.ic_folder_dark)
-        }
+        SugarRecord.listAll(Folder::class.java)
+                .sorted()
+                .forEach { navigation?.menu?.add(it.name)?.setIcon(R.drawable.ic_folder_dark) }
 
         navigation?.menu?.add(0, 2, 0, R.string.activity_main_new_folder)?.setIcon(R.drawable.ic_add_dark)
         navigation?.setNavigationItemSelectedListener {
@@ -258,6 +258,7 @@ class MainActivity : AppCompatActivity() {
                 it.delete()
             }
 
+            folder = null
             setupNavigation()
             setupContent(intent)
         } else {
