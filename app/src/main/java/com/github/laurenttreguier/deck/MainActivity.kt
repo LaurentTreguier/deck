@@ -191,6 +191,11 @@ class MainActivity : AppCompatActivity() {
         object : AsyncTask<Void, Void, CardAdapter>() {
             override fun onPreExecute() {
                 loader?.show()
+                title = if (folder != null) {
+                    folder!!.name
+                } else {
+                    getString(R.string.activity_main_all_cards)
+                }
             }
 
             override fun doInBackground(vararg params: Void?): CardAdapter {
