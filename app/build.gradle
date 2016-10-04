@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.github.laurenttreguier.deck"
-        minSdkVersion 12
+        minSdkVersion 11
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"

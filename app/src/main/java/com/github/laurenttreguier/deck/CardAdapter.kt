@@ -1,6 +1,7 @@
 package com.github.laurenttreguier.deck
 
 import android.content.Intent
+import android.support.v4.view.ViewCompat
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -56,7 +57,7 @@ class CardAdapter(private val cards: MutableList<Card>) :
                 select?.visibility = visibility
 
                 if (animate) {
-                    itemView?.animate()
+                    ViewCompat.animate(itemView)
                             ?.setInterpolator(FastOutSlowInInterpolator())
                             ?.setDuration(itemView.context?.resources
                                     ?.getInteger(android.R.integer.config_shortAnimTime)!!.toLong())
