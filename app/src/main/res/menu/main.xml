@@ -11,8 +11,12 @@
         app:showAsAction="collapseActionView|ifRoom" />
     <item
         android:id="@+id/main_new_folder"
-        android:title="@string/menu_main_new_folder" />
+        android:icon="@drawable/ic_create_new_folder"
+        android:title="@string/menu_main_new_folder"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/main_delete_folder"
-        android:title="@string/menu_main_delete_folder" />
+        android:icon="@drawable/ic_delete"
+        android:title="@string/menu_main_delete_folder"
+        app:showAsAction="ifRoom" />
 </menu>

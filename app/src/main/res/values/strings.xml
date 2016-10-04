@@ -3,14 +3,19 @@
     <string name="app_name">Deck</string>
     <string name="activity_main_all_cards">All cards</string>
     <string name="activity_main_new_folder">New folder</string>
-    <string name="activity_main_cannot_delete">This folder cannot be deleted</string>
     <string name="activity_share_dialog_title">New card</string>
     <string name="activity_share_dialog_hint">Name</string>
     <string name="menu_main_search">Search</string>
     <string name="menu_main_new_folder">Add new folder</string>
     <string name="menu_main_delete_folder">Delete this folder</string>
-    <string name="menu_main_delete">Delete</string>
-    <string name="menu_main_add">Add to another folder</string>
+    <string name="menu_main_selection_add">Add to another folder</string>
+    <string name="menu_main_selection_remove">Remove from this folder</string>
+    <string name="menu_main_selection_delete">Delete</string>
+
+    <plurals name="activity_main_remove">
+        <item quantity="one">%d card removed</item>
+        <item quantity="other">%d cards removed</item>
+    </plurals>
 
     <plurals name="activity_main_delete">
         <item quantity="one">%d card deleted</item>

@@ -18,9 +18,16 @@ import java.util.*
 
 class CardAdapter(private val cards: MutableList<Card>) :
         RecyclerView.Adapter<CardAdapter.ViewHolder>() {
-    private val cardsBackup = ArrayList<Card>()
-    private val selected = ArrayList<Card>()
-    private var onSelectionListener: OnSelectionListener? = null
+    val cardsBackup = ArrayList<Card>()
+        get() = field
+    val selected = ArrayList<Card>()
+        get() = field
+    val selectedCount: Int
+        get() = selected.size
+    var onSelectionListener: OnSelectionListener? = null
+        set(value) {
+            field = value
+        }
 
     companion object {
         private val UNSELECTED_SCALE = 1f
@@ -143,14 +150,6 @@ class CardAdapter(private val cards: MutableList<Card>) :
 
     override fun getItemCount() = cards.size
 
-    fun getSelected() = selected
-
-    fun getSelectedCount() = selected.size
-
-    fun setOnSelectionListener(onSelectionListener: OnSelectionListener) {
-        this.onSelectionListener = onSelectionListener
-    }
-
     fun backup() {
         cards.removeAll(selected)
         cardsBackup.addAll(selected)
@@ -165,9 +164,11 @@ class CardAdapter(private val cards: MutableList<Card>) :
         notifyDataSetChanged()
     }
 
+    fun flush() = cardsBackup.clear()
+
     fun delete() {
         cardsBackup.forEach { it.delete() }
-        cardsBackup.clear()
+        flush()
     }
 
     fun clear() {
@@ -196,4 +197,5 @@ class CardAdapter(private val cards: MutableList<Card>) :
     }
 }
 
-fun RecyclerView.getCardAdapter() = adapter?.run { this as CardAdapter }
+val RecyclerView.cardAdapter: CardAdapter?
+    get() = adapter?.run { this as CardAdapter }
