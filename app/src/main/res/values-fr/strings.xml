@@ -3,6 +3,7 @@
     <string name="app_name">Deck</string>
     <string name="activity_main_all_cards">Toutes les cartes</string>
     <string name="activity_main_new_folder">Nouveau dossier</string>
+    <string name="activity_main_delete_folder_confirm">Êtes vous sûr(e) de vouloir supprimer ce dossier ?</string>
     <string name="activity_share_dialog_title">Nouvelle carte</string>
     <string name="activity_share_dialog_hint">Nom</string>
     <string name="menu_main_search">Rechercher</string>

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Rect
 import android.os.AsyncTask
 import android.os.Bundle
+import android.support.annotation.PluralsRes
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.content.res.ResourcesCompat
@@ -122,69 +123,11 @@ class MainActivity : AppCompatActivity() {
 
             R.id.main_selection_cancel -> cancelSelection()
 
-            R.id.main_selection_add -> {
-                val folders = SugarRecord.listAll(Folder::class.java).sorted()
-                AlertDialog.Builder(this, R.style.AppTheme_AlertDialog)
-                        .setTitle(R.string.menu_main_selection_add)
-                        .setItems(folders.map { it.name }.toTypedArray()) { dialogInterface, i ->
-                            recycler?.cardAdapter?.selected?.forEach {
-                                val cardFolders = Select.from(CardFolder::class.java)
-                                        .where(Condition.prop(CardFolder::folder.name)
-                                                .eq(folders[i].id))
-                                        .where(Condition.prop(CardFolder::card.name)
-                                                .eq(it.id))
+            R.id.main_selection_add -> addSelection()
 
-                                if (cardFolders.count() == 0L) {
-                                    CardFolder(it, folders[i]).save()
-                                }
-                            }
+            R.id.main_selection_remove -> removeSelection()
 
-                            cancelSelection()
-                        }
-                        .show()
-            }
-
-            R.id.main_selection_remove -> {
-                val adapter = recycler!!.cardAdapter
-                val count = adapter!!.selectedCount
-
-                adapter.backup()
-                snackbar = Snackbar.make(recycler as RecyclerView,
-                        resources.getQuantityString(R.plurals.activity_main_remove, count, count),
-                        Snackbar.LENGTH_LONG)
-                        .setAction(android.R.string.cancel) { adapter.restore() }
-                        .setCallback(object : Snackbar.Callback() {
-                            override fun onDismissed(snackbar: Snackbar?, event: Int) {
-                                if (event != DISMISS_EVENT_ACTION) {
-                                    removeCards()
-                                }
-                            }
-                        })
-
-                snackbar?.show()
-                cancelSelection()
-            }
-
-            R.id.main_selection_delete -> {
-                val adapter = recycler!!.cardAdapter
-                val count = adapter!!.selectedCount
-
-                adapter.backup()
-                snackbar = Snackbar.make(recycler as RecyclerView,
-                        resources.getQuantityString(R.plurals.activity_main_delete, count, count),
-                        Snackbar.LENGTH_LONG)
-                        .setAction(android.R.string.cancel) { adapter.restore() }
-                        .setCallback(object : Snackbar.Callback() {
-                            override fun onDismissed(snackbar: Snackbar?, event: Int) {
-                                if (event != DISMISS_EVENT_ACTION) {
-                                    adapter.delete()
-                                }
-                            }
-                        })
-
-                snackbar?.show()
-                cancelSelection()
-            }
+            R.id.main_selection_delete -> deleteSelection()
         }
 
         return super.onOptionsItemSelected(item)
@@ -337,17 +280,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun deleteFolder() {
-        folder?.run {
-            Select.from(CardFolder::class.java)
-                    .where(Condition.prop(CardFolder::folder.name).eq(id))
-                    .list()
-                    .forEach { it.delete() }
-            delete()
-        }
+        AlertDialog.Builder(this, R.style.AppTheme_AlertDialog)
+                .setTitle(R.string.menu_main_delete_folder)
+                .setMessage(R.string.activity_main_delete_folder_confirm)
+                .setPositiveButton(android.R.string.ok) { dialogInterface, i ->
+                    folder?.run {
+                        Select.from(CardFolder::class.java)
+                                .where(Condition.prop(CardFolder::folder.name).eq(id))
+                                .list()
+                                .forEach { it.delete() }
+                        delete()
+                    }
 
-        folder = null
-        setupNavigation()
-        setupContent(intent)
+                    folder = null
+                    setupNavigation()
+                    setupContent(intent)
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
     }
 
     private fun removeCards() {
@@ -367,4 +317,55 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun cancelSelection() = recycler?.cardAdapter?.run { clear() }
+
+    private fun addSelection() {
+        val folders = SugarRecord.listAll(Folder::class.java).sorted()
+        AlertDialog.Builder(this, R.style.AppTheme_AlertDialog)
+                .setTitle(R.string.menu_main_selection_add)
+                .setItems(folders.map { it.name }.toTypedArray()) { dialogInterface, i ->
+                    recycler?.cardAdapter?.selected?.forEach {
+                        val cardFolders = Select.from(CardFolder::class.java)
+                                .where(Condition.prop(CardFolder::folder.name)
+                                        .eq(folders[i].id))
+                                .where(Condition.prop(CardFolder::card.name)
+                                        .eq(it.id))
+
+                        if (cardFolders.count() == 0L) {
+                            CardFolder(it, folders[i]).save()
+                        }
+                    }
+
+                    cancelSelection()
+                }
+                .show()
+    }
+
+    private fun removeSelection() = removeOrDeleteSelection(R.plurals.activity_main_remove) {
+        removeCards()
+    }
+
+    private fun deleteSelection() = removeOrDeleteSelection(R.plurals.activity_main_delete) {
+        recycler?.cardAdapter?.delete()
+    }
+
+    private fun removeOrDeleteSelection(@PluralsRes string: Int, endAction: () -> Unit) {
+        val adapter = recycler!!.cardAdapter
+        val count = adapter!!.selectedCount
+
+        adapter.backup()
+        snackbar = Snackbar.make(recycler as RecyclerView,
+                resources.getQuantityString(string, count, count),
+                Snackbar.LENGTH_LONG)
+                .setAction(android.R.string.cancel) { adapter.restore() }
+                .setCallback(object : Snackbar.Callback() {
+                    override fun onDismissed(snackbar: Snackbar?, event: Int) {
+                        if (event != DISMISS_EVENT_ACTION) {
+                            endAction()
+                        }
+                    }
+                })
+
+        snackbar?.show()
+        cancelSelection()
+    }
 }
