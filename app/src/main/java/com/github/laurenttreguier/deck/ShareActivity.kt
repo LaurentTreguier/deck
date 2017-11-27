@@ -19,7 +19,7 @@ class ShareActivity : Activity() {
         val url = ShareCompat.IntentReader.from(this).text.toString()
         val imageUri = ShareCompat.IntentReader.from(this).stream
         val dialogContent = layoutInflater.inflate(R.layout.dialog, null)
-        val nameEditText = dialogContent.findViewById(R.id.dialog_name) as TextView
+        val nameEditText = dialogContent.findViewById<TextView>(R.id.dialog_name)
 
         fun terminate() {
             val imageFile = File(imageUri.path)

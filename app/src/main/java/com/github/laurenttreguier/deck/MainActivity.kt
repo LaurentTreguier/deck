@@ -30,29 +30,30 @@ import com.github.laurenttreguier.deck.model.Folder
 import com.orm.SugarRecord
 import com.orm.query.Condition
 import com.orm.query.Select
+import java.lang.ref.WeakReference
 
 class MainActivity : AppCompatActivity() {
     private var drawer: DrawerLayout? = null
     private var drawerToggle: ActionBarDrawerToggle? = null
     private var toolbar: Toolbar? = null
     private var navigation: NavigationView? = null
-    private var refresh: SwipeRefreshLayout? = null
-    private var recycler: RecyclerView? = null
     private var loader: ContentLoadingProgressBar? = null
     private var snackbar: Snackbar? = null
-    private var selecting = false
     private var folder: Folder? = null
+    internal var refresh: SwipeRefreshLayout? = null
+    internal var recycler: RecyclerView? = null
+    internal var selecting = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        drawer = findViewById(R.id.drawer) as DrawerLayout?
-        toolbar = findViewById(R.id.activity_main_toolbar) as Toolbar?
-        navigation = findViewById(R.id.navigation) as NavigationView?
-        refresh = findViewById(R.id.activity_main_refresh) as SwipeRefreshLayout?
-        recycler = findViewById(R.id.activity_main_content) as RecyclerView?
-        loader = findViewById(R.id.activity_main_loader) as ContentLoadingProgressBar?
+        drawer = findViewById(R.id.drawer)
+        toolbar = findViewById(R.id.activity_main_toolbar)
+        navigation = findViewById(R.id.navigation)
+        refresh = findViewById(R.id.activity_main_refresh)
+        recycler = findViewById(R.id.activity_main_content)
+        loader = findViewById(R.id.activity_main_loader)
 
         setSupportActionBar(toolbar)
 
@@ -92,6 +93,7 @@ class MainActivity : AppCompatActivity() {
             val searchView = searchItem?.actionView as SearchView
 
             searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+            @Suppress("DEPRECATION")
             MenuItemCompat.setOnActionExpandListener(searchItem,
                     object : MenuItemCompat.OnActionExpandListener {
                         override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
@@ -106,7 +108,7 @@ class MainActivity : AppCompatActivity() {
                     })
 
             if (folder == null) {
-                menu?.removeItem(R.id.main_delete_folder)
+                menu.removeItem(R.id.main_delete_folder)
             }
         } else if (folder == null) {
             menu?.removeItem(R.id.main_selection_remove)
@@ -196,69 +198,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupContent(intent: Intent?) {
-        object : AsyncTask<Void, Void, CardAdapter>() {
-            override fun onPreExecute() {
-                loader?.show()
-                title = if (folder != null) {
-                    folder!!.name
-                } else {
-                    getString(R.string.activity_main_all_cards)
-                }
+        loader?.show()
+        title = if (folder != null) {
+            folder!!.name
+        } else {
+            getString(R.string.activity_main_all_cards)
+        }
 
-                snackbar?.dismiss()
-                removeCards()
-                cancelSelection()
-                invalidateOptionsMenu()
-            }
+        snackbar?.dismiss()
+        removeCards()
+        cancelSelection()
+        invalidateOptionsMenu()
 
-            override fun doInBackground(vararg params: Void?): CardAdapter {
-                val cards = if (folder != null) {
-                    Select.from(CardFolder::class.java)
-                            .where(Condition.prop(CardFolder::folder.name).eq(folder!!.id))
-                            .list()
-                            .mapNotNull { it.card }
-                            .toMutableList()
-                } else if (intent?.action == Intent.ACTION_SEARCH) {
-                    Select.from(Card::class.java)
-                            .where(Condition.prop(Card::name.name)
-                                    .like("%" + intent?.getStringExtra(SearchManager.QUERY) + "%"))
-                            .list()
-                } else {
-                    SugarRecord.listAll(Card::class.java)
-                }
-
-                val adapter = CardAdapter(cards)
-                adapter.onSelectionListener = object : CardAdapter.OnSelectionListener {
-                    override fun onBegin() {
-                        selecting = true
-                        invalidateOptionsMenu()
-                    }
-
-                    override fun onEnd() {
-                        selecting = false
-                        invalidateOptionsMenu()
-                    }
-                }
-
-                return adapter
-            }
-
-            override fun onPostExecute(result: CardAdapter?) {
-                if (recycler?.adapter == null) {
-                    recycler!!.adapter = result
-                } else {
-                    recycler?.swapAdapter(result, true)
-                }
-
-                loader?.hide()
-                refresh?.isRefreshing = false
-            }
-        }.execute()
+        SetupTask(WeakReference(this), WeakReference(intent), WeakReference(loader), WeakReference(folder)).execute()
     }
 
     private fun newFolder() {
         val dialogContent = layoutInflater.inflate(R.layout.dialog, null)
-        val nameEditText = dialogContent.findViewById(R.id.dialog_name) as TextView
+        val nameEditText = dialogContent.findViewById<TextView>(R.id.dialog_name)
 
         AlertDialog.Builder(this, R.style.AppTheme_AlertDialog)
                 .setTitle(R.string.activity_main_new_folder)
@@ -357,7 +314,7 @@ class MainActivity : AppCompatActivity() {
                 resources.getQuantityString(string, count, count),
                 Snackbar.LENGTH_LONG)
                 .setAction(android.R.string.cancel) { adapter.restore() }
-                .setCallback(object : Snackbar.Callback() {
+                .addCallback(object : Snackbar.Callback() {
                     override fun onDismissed(snackbar: Snackbar?, event: Int) {
                         if (event != DISMISS_EVENT_ACTION) {
                             endAction()
@@ -367,5 +324,54 @@ class MainActivity : AppCompatActivity() {
 
         snackbar?.show()
         cancelSelection()
+    }
+}
+
+private class SetupTask(val activity: WeakReference<MainActivity>,
+                        val intent: WeakReference<Intent?>,
+                        val loader: WeakReference<ContentLoadingProgressBar?>,
+                        val folder: WeakReference<Folder?>) : AsyncTask<Void, Void, CardAdapter>() {
+    override fun doInBackground(vararg params: Void?): CardAdapter {
+        val act: MainActivity = activity.get()!!
+        val cards = when {
+            folder.get() != null -> Select.from(CardFolder::class.java)
+                    .where(Condition.prop(CardFolder::folder.name).eq(folder.get()!!.id))
+                    .list()
+                    .mapNotNull { it.card }
+                    .toMutableList()
+            intent.get()?.action == Intent.ACTION_SEARCH -> Select.from(Card::class.java)
+                    .where(Condition.prop(Card::name.name)
+                            .like("%" + intent.get()?.getStringExtra(SearchManager.QUERY) + "%"))
+                    .list()
+            else -> SugarRecord.listAll(Card::class.java)
+        }
+
+        val adapter = CardAdapter(cards)
+        adapter.onSelectionListener = object : CardAdapter.OnSelectionListener {
+            override fun onBegin() {
+                act.selecting = true
+                act.invalidateOptionsMenu()
+            }
+
+            override fun onEnd() {
+                act.selecting = false
+                act.invalidateOptionsMenu()
+            }
+        }
+
+        return adapter
+    }
+
+    override fun onPostExecute(result: CardAdapter?) {
+        val act: MainActivity = activity.get()!!
+
+        if (act.recycler?.adapter == null) {
+            act.recycler!!.adapter = result
+        } else {
+            act.recycler?.swapAdapter(result, true)
+        }
+
+        loader.get()?.hide()
+        act.refresh?.isRefreshing = false
     }
 }

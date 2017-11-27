@@ -20,15 +20,10 @@ import java.util.*
 class CardAdapter(private val cards: MutableList<Card>) :
         RecyclerView.Adapter<CardAdapter.ViewHolder>() {
     val cardsBackup = ArrayList<Card>()
-        get() = field
     val selected = ArrayList<Card>()
-        get() = field
     val selectedCount: Int
         get() = selected.size
     var onSelectionListener: OnSelectionListener? = null
-        set(value) {
-            field = value
-        }
 
     companion object {
         private val UNSELECTED_SCALE = 1f
@@ -115,8 +110,8 @@ class CardAdapter(private val cards: MutableList<Card>) :
                                     it.removeOnLayoutChangeListener(this)
 
                                     if (it.height > 0) {
-                                        params?.width = it.width
-                                        params?.height = it.height
+                                        params.width = it.width
+                                        params.height = it.height
                                         holder.preview?.layoutParams = params
                                     }
                                 }
@@ -186,9 +181,9 @@ class CardAdapter(private val cards: MutableList<Card>) :
         var select: ImageView? = null
 
         init {
-            title = itemView?.findViewById(R.id.card_title) as TextView?
-            preview = itemView?.findViewById(R.id.card_preview) as ImageView?
-            select = itemView?.findViewById(R.id.card_select) as ImageView?
+            title = itemView?.findViewById(R.id.card_title)
+            preview = itemView?.findViewById(R.id.card_preview)
+            select = itemView?.findViewById(R.id.card_select)
         }
     }
 
