@@ -1,4 +1,4 @@
 # deck
-Android application experiment for use with the Plag Android application (http://plag.com)
+Android application experiment for use with the Sola Android application (https://sola.ai)
 
-Please note that this project is unofficial and is not affiliated to the Plag project in any way.
+Please note that this project is unofficial and is not affiliated with, approved or endorsed by the Sola foundation in any way.

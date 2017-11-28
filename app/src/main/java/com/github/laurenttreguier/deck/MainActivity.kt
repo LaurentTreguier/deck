@@ -1,13 +1,17 @@
 package com.github.laurenttreguier.deck
 
+import android.Manifest
 import android.app.SearchManager
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.os.AsyncTask
+import android.os.Build
 import android.os.Bundle
 import android.support.annotation.PluralsRes
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.MenuItemCompat
@@ -77,11 +81,25 @@ class MainActivity : AppCompatActivity() {
         })
 
         setupContent(intent)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
+            }
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setupContent(intent)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            setupContent(intent)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -120,15 +138,10 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.main_new_folder -> newFolder()
-
             R.id.main_delete_folder -> deleteFolder()
-
             R.id.main_selection_cancel -> cancelSelection()
-
             R.id.main_selection_add -> addSelection()
-
             R.id.main_selection_remove -> removeSelection()
-
             R.id.main_selection_delete -> deleteSelection()
         }
 
@@ -136,12 +149,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (drawer!!.isDrawerOpen(GravityCompat.START)) {
-            drawer!!.closeDrawer(GravityCompat.START)
-        } else if (selecting) {
-            cancelSelection()
-        } else {
-            super.onBackPressed()
+        when {
+            drawer!!.isDrawerOpen(GravityCompat.START) -> drawer!!.closeDrawer(GravityCompat.START)
+            selecting -> cancelSelection()
+            else -> super.onBackPressed()
         }
     }
 
@@ -220,7 +231,7 @@ class MainActivity : AppCompatActivity() {
         AlertDialog.Builder(this, R.style.AppTheme_AlertDialog)
                 .setTitle(R.string.activity_main_new_folder)
                 .setView(dialogContent)
-                .setPositiveButton(android.R.string.ok) { dialogInterface, i ->
+                .setPositiveButton(android.R.string.ok) { _, _ ->
                     val name = nameEditText.text
                     val num = Select.from(Folder::class.java)
                             .where(Condition.prop(Folder::name.name).eq(name))
@@ -240,7 +251,7 @@ class MainActivity : AppCompatActivity() {
         AlertDialog.Builder(this, R.style.AppTheme_AlertDialog)
                 .setTitle(R.string.menu_main_delete_folder)
                 .setMessage(R.string.activity_main_delete_folder_confirm)
-                .setPositiveButton(android.R.string.ok) { dialogInterface, i ->
+                .setPositiveButton(android.R.string.ok) { _, _ ->
                     folder?.run {
                         Select.from(CardFolder::class.java)
                                 .where(Condition.prop(CardFolder::folder.name).eq(id))
@@ -279,7 +290,7 @@ class MainActivity : AppCompatActivity() {
         val folders = SugarRecord.listAll(Folder::class.java).sorted()
         AlertDialog.Builder(this, R.style.AppTheme_AlertDialog)
                 .setTitle(R.string.menu_main_selection_add)
-                .setItems(folders.map { it.name }.toTypedArray()) { dialogInterface, i ->
+                .setItems(folders.map { it.name }.toTypedArray()) { _, i ->
                     recycler?.cardAdapter?.selected?.forEach {
                         val cardFolders = Select.from(CardFolder::class.java)
                                 .where(Condition.prop(CardFolder::folder.name)

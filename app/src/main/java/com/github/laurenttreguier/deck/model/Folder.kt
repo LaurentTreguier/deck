@@ -2,9 +2,7 @@ package com.github.laurenttreguier.deck.model
 
 import java.util.*
 
-class Folder(name: String) : NamedRecord(name), Comparable<Folder> {
-    constructor() : this("")
-
+class Folder(name: String = "") : NamedRecord(name), Comparable<Folder> {
     init {
         id = Calendar.getInstance().time.time
     }

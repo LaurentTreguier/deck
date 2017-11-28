@@ -36,15 +36,14 @@ class ShareActivity : Activity() {
         AlertDialog.Builder(this, R.style.AppTheme_AlertDialog)
                 .setTitle(R.string.activity_share_dialog_title)
                 .setView(dialogContent)
-                .setPositiveButton(android.R.string.ok) { dialogInterface, i ->
-                    val id = url.replace(Constants.POST_URL, "").replace("/", "").toLong()
-                    val card = Card(id, nameEditText.text.toString(), imageUri.path)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    val card = Card(nameEditText.text.toString(), url.split('/').last { it.isNotEmpty() }, imageUri.path)
 
                     card.save()
                     saving = true
                     terminate()
                 }
-                .setNegativeButton(android.R.string.cancel) { dialogInterface, i -> terminate() }
+                .setNegativeButton(android.R.string.cancel) { _, _ -> terminate() }
                 .setOnCancelListener { terminate() }
                 .setOnDismissListener { terminate() }
                 .show()
