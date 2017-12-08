@@ -34,14 +34,12 @@ class CardAdapter(private val cards: MutableList<Card>) :
     }
 
     init {
-        Collections.sort(cards)
+        sort()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder? {
-        val inflater = LayoutInflater.from(parent?.context)
-        val cardView = inflater.inflate(R.layout.card, parent, false)
-
-        return ViewHolder(cardView)
+        parent?.let { return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.card, parent, false)) }
+        return ViewHolder(null)
     }
 
     @SuppressLint("CheckResult")
@@ -152,6 +150,10 @@ class CardAdapter(private val cards: MutableList<Card>) :
 
     override fun getItemCount() = cards.size
 
+    fun sort() {
+        Collections.sort(cards)
+    }
+
     fun backup() {
         cards.removeAll(selected)
         cardsBackup.addAll(selected)
@@ -162,7 +164,7 @@ class CardAdapter(private val cards: MutableList<Card>) :
     fun restore() {
         cards.addAll(cardsBackup)
         cardsBackup.clear()
-        Collections.sort(cards)
+        sort()
         notifyDataSetChanged()
     }
 

@@ -137,6 +137,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
+            R.id.main_select_sort -> selectSort()
             R.id.main_new_folder -> newFolder()
             R.id.main_delete_folder -> deleteFolder()
             R.id.main_selection_cancel -> cancelSelection()
@@ -222,6 +223,28 @@ class MainActivity : AppCompatActivity() {
         invalidateOptionsMenu()
 
         SetupTask(WeakReference(this), WeakReference(intent), WeakReference(loader), WeakReference(folder)).execute()
+    }
+
+    private fun selectSort() {
+        fun refreshCards(comp: Comparator<Card>) {
+            Card.comparator = comp
+            recycler?.run {
+                val cardAdapter: CardAdapter = adapter as CardAdapter
+                cardAdapter.sort()
+                cardAdapter.notifyDataSetChanged()
+            }
+        }
+
+        AlertDialog.Builder(this, R.style.AppTheme_AlertDialog)
+                .setTitle(R.string.activity_main_dialog_sort_title)
+                .setPositiveButton(R.string.activity_main_dialog_sort_positive) { _, _ ->
+                    refreshCards(Card.COMPARATOR_ALPHABETICAL)
+                }
+                .setNegativeButton(R.string.activity_main_dialog_sort_negative) { _, _ ->
+                    refreshCards(Card.COMPARATOR_TIMESTAMP)
+                }
+                .setNeutralButton(android.R.string.cancel, null)
+                .show()
     }
 
     private fun newFolder() {

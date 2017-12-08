@@ -10,6 +10,11 @@
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
     <item
+        android:id="@+id/main_select_sort"
+        android:icon="@drawable/ic_sort"
+        android:title="@string/menu_main_sort"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/main_new_folder"
         android:icon="@drawable/ic_create_new_folder"
         android:title="@string/menu_main_new_folder"

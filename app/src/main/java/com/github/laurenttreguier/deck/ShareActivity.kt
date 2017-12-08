@@ -16,8 +16,9 @@ class ShareActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val url = ShareCompat.IntentReader.from(this).text.toString()
-        val imageUri = ShareCompat.IntentReader.from(this).stream
+        val intentReader = ShareCompat.IntentReader.from(this)
+        val url = intentReader.text.toString()
+        val imageUri = intentReader.stream
         val dialogContent = layoutInflater.inflate(R.layout.dialog, null)
         val nameEditText = dialogContent.findViewById<TextView>(R.id.dialog_name)
 

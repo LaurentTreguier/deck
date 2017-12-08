@@ -5,13 +5,13 @@ import java.util.*
 
 class Card(name: String = "", var postId: String = "", var previewPath: String = "") : NamedRecord(name), Comparable<Card> {
     companion object {
-        private val COMPARATOR_ALPHABETICAL: Comparator<Card> = Comparator { o1, o2 ->
+        val COMPARATOR_ALPHABETICAL: Comparator<Card> = Comparator { o1, o2 ->
             val a = if (reversed) o2 else o1
             val b = if (reversed) o1 else o2
             return@Comparator a.name.compareTo(b.name)
         }
 
-        private val COMPARATOR_TIMESTAMP: Comparator<Card> = Comparator { o1, o2 ->
+        val COMPARATOR_TIMESTAMP: Comparator<Card> = Comparator { o1, o2 ->
             val a = if (reversed) o1 else o2
             val b = if (reversed) o2 else o1
             return@Comparator a.timestamp.compareTo(b.timestamp)
